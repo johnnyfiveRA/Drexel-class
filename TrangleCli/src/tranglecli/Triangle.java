@@ -57,7 +57,7 @@ public class Triangle
         return (side1 + side2 + side3); // parentheses for clarity
     }
     
-    // some heron formula usage? (done probably ok but needs testing)
+    // some heron formula usage? (done, probably ok but needs testing)
     
     public double getArea()
     {
@@ -102,9 +102,14 @@ public class Triangle
     
     // Facilitators 
     
+    /* explore implementing a sanity check function that makes sure that the sides that are input 
+     * actually make a triangle. Although this maybe a job for the user of this object
+     * a+b>c a+c>b b+c>a 
+    */
+    
     private boolean isRight() 
     {
-      /*yea I could have just set the variable but I already wrote it as an accessor
+      /*Yea I could have just set the variable but I already wrote it as an accessor
       * then I made it a facilitator which would mean it should be private in this case
       * I did that after seeing project 3-2. Wanted to get this object complete 
       * to use it for it. Having to call this function everytime to get the triangle state
