@@ -52,10 +52,8 @@ public class JTWGradeBook {
                 {
                     System.out.println("You will be asked to select a student, please enter grades as promtped");
                     book.addEntry();
-                    System.out.println("Would you like to add another entry? Type y or yes to continue");
+                    System.out.println("Would you like to add an entry? Type y or yes to continue");
                     doMore = input.next();
-                    System.out.println(doMore + " " + doMore.equalsIgnoreCase("yes") + doMore.equalsIgnoreCase("y"));
-                
                 }while ( doMore.equalsIgnoreCase("yes") || doMore.equalsIgnoreCase("y") );
                 
                 // TODO: list the entries and display the bar chart by JTW

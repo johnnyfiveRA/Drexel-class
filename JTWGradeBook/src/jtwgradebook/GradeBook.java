@@ -11,8 +11,10 @@ import java.util.Scanner;
 public class GradeBook {
 	
 	private String course;
-	private ArrayList<Person> students = new ArrayList<Person>();
-	private ArrayList<GradeBookEntry> entries = new ArrayList<GradeBookEntry>();
+	private ArrayList<Person> students = new ArrayList<>();
+	private ArrayList<HomeWorkEntry> homeWorkEntries = new ArrayList<>();
+        private ArrayList<ExamEntry> ExamEntries = new ArrayList<>();
+        
 	
 	public String getCourse() {
             return course;
@@ -28,6 +30,9 @@ public class GradeBook {
 	
 	public void addEntry()
         {	
+            
+            String homeorExam;
+            
             // Print out each students name and choose one
             System.out.println("Grade which student: ");
             for( int i=0; i<students.size(); i++ )
@@ -44,52 +49,104 @@ public class GradeBook {
                 return;
             }
                 
-            // DONE: get the assessment name and numeric grade coded by JTW
-            // DONE: set the data in the new entry coded by JTW
-                
-            GradeBookEntry entry = new GradeBookEntry();
-            entry.setStudent(students.get(studentSelect));
-                
-            System.out.println("What was the name of the assesment");
-            entry.setAssessmentName(reader.next());
-                
-            System.out.println("Enter the numeric grade of the assesment in whole numbers (0-100) only");
-            int grade = reader.nextInt();
-                
-            while (grade < 0 || grade > 100)
+            System.out.println("Is this a Homework assignemnt or an Exam?");
+            System.out.println("Type homework or exam to make the appropriate entry");
+            homeorExam = reader.next();
+            
+            while (  !(homeorExam.equalsIgnoreCase("homework")) && !(homeorExam.equalsIgnoreCase("exam")) )
             {
-                System.out.println("Only whole numbers between 0 and 100 are accepted as grades. Please enter a valid grade");
-                grade = reader.nextInt();
+                System.out.println(" Please type either \"homework\" or \"exam\" (without quotes) to make the appropriate entry");
+                homeorExam = reader.next();
             }
+            
+            if (homeorExam.equals("homework"))
+            {
+                HomeWorkEntry hEntry = new HomeWorkEntry();
+                hEntry.setStudent(students.get(studentSelect));
                 
-            entry.setNumericGrade(grade);
+                System.out.println("What was the name of the assignment");
+                hEntry.setAssessmentName(reader.next());
+                
+                System.out.println("Enter the numeric grade of the assignment in whole numbers (0-100) only");
+                int grade = reader.nextInt();
+                
+                while (grade < 0 || grade > 100)
+                {
+                    System.out.println("Only whole numbers between 0 and 100 are accepted as grades. Please enter a valid grade");
+                    grade = reader.nextInt();
+                }
+                
+                hEntry.setNumericGrade(grade);
 		
-            entries.add(entry);
+                homeWorkEntries.add(hEntry);
+            }
+            
+            if (homeorExam.equals("exam"))
+            {
+                ExamEntry eEntry = new ExamEntry();
+                eEntry.setStudent(students.get(studentSelect));
+                
+                System.out.println("What was the name of the assesment");
+                eEntry.setAssessmentName(reader.next());
+                
+                System.out.println("Enter the numeric grade of the assesment (before any curve) in whole numbers (0-100) only");
+                int grade = reader.nextInt();
+                
+                while (grade < 0 || grade > 100)
+                {
+                    System.out.println("Only whole numbers between 0 and 100 are accepted as grades. Please enter a valid grade");
+                    grade = reader.nextInt();
+                }
+                
+                // set a curve
+                System.out.println("Enter the flat curve on the exam");
+                int curve = reader.nextInt();
+                
+                while (curve < 0 || curve > 100)
+                {
+                    System.out.println("Only whole numbers between 0 and 100 are accepted as curves. Please enter a valid flat curve");
+                    curve = reader.nextInt();
+                }
+                
+                eEntry.setNumericGrade(grade, curve);
+		
+                ExamEntries.add(eEntry);
+            }
+            
 	}
 	
-	public void listGrades()
+	public void listGrades() throws InterruptedException
         {
             // DONE: Print out all the grade entries in this gradebook coded by JTW
-            System.out.println("For course: " + course);
-            for (int i =0; i < entries.size();i++)
+            
+            System.out.println(" Homework assignments for course: " + course);
+            for (int i =0; i < homeWorkEntries.size();i++)
             {
-                entries.get(i).printEntry(); // easy enough
+                homeWorkEntries.get(i).getData(); // easy enough
             }
-                
+            System.out.println("Any Exams will display in 5 seconds");
+            Thread.sleep(5000);
+            
+            System.out.println("Exam assessments for course: " + course);
+            for (int i =0; i < ExamEntries.size();i++)
+            {
+                ExamEntries.get(i).getData();
+            }
 	}
 	
-	public void displaySummary()
+	public void displaySummary() throws InterruptedException
         {
             // Done: show a distribution of letter grades in this class. by JTW
+            System.out.println("Homework for: " + course);
             
             for (int i =0; i <=4; i++)
             {
-                switch (i) // might be a weird way to do it. Might try enums. 
+                switch (i) 
                 {
                     case 0:  System.out.print("F: ");    
-                             for(int index =0; index < entries.size(); index++)
+                             for(int index =0; index < homeWorkEntries.size(); index++)
                              {
-                                if (entries.get(index).getLetterGrade().equals("F"))
+                                if (homeWorkEntries.get(index).getLetterGrade().equals("F"))
                                     {
                                         System.out.print("*");
                                     }
@@ -98,9 +155,9 @@ public class GradeBook {
                             break;
                     
                     case 1: System.out.print("D: ");    
-                            for(int index =0; index < entries.size(); index++)
+                            for(int index =0; index < homeWorkEntries.size(); index++)
                             {
-                                if (entries.get(index).getLetterGrade().equals("D"))
+                                if (homeWorkEntries.get(index).getLetterGrade().equals("D"))
                                 {
                                     System.out.print("*");
                                 }
@@ -109,31 +166,83 @@ public class GradeBook {
                             break;
                         
                     case 2: System.out.print("C: ");
-                            for(int index =0; index < entries.size(); index++)
+                            for(int index =0; index < homeWorkEntries.size(); index++)
                             {
-                                if (entries.get(index).getLetterGrade().equals("C"))
+                                if (homeWorkEntries.get(index).getLetterGrade().equals("C"))
                                 {
                                     System.out.print("*");
                                 }
-                            }    
+                            }
+                           
                             System.out.println();
                             break;
                         
                     case 3: System.out.print("B: ");   
-                            for(int index =0; index < entries.size(); index++)
+                            for(int index =0; index < homeWorkEntries.size(); index++)
                             {
-                                if (entries.get(index).getLetterGrade().equals("B"))
+                                if (homeWorkEntries.get(index).getLetterGrade().equals("B"))
                                 {
                                     System.out.print("*");
                                 }
-                            }
+                            } 
+                            
                             System.out.println();
                             break;
                         
                     case 4: System.out.print("A: ");
-                            for(int index =0; index < entries.size(); index++)
+                            for(int index =0; index < homeWorkEntries.size(); index++)
                             {
-                                if (entries.get(index).getLetterGrade().equals("A"))
+                                if (homeWorkEntries.get(index).getLetterGrade().equals("A"))
+                                {
+                                    System.out.print("*");
+                                }
+                            }
+                            
+                            System.out.println();
+                            break;
+                        
+                } // end switch for homework
+                
+            } // end of outer for for homework entries
+            System.out.println("Chart for any exams will display in 5 seconds");
+            Thread.sleep(5000);
+            
+            System.out.println("Exams for: " + course);
+            
+            for (int i =0; i <=4; i++) // need a second one of these so that the summaries for exams don't mash with homework entries
+            {
+                switch (i)  
+                {
+                    case 0:  System.out.print("F: ");    
+                             for(int index =0; index < ExamEntries.size(); index++)
+                            {
+                                if (ExamEntries.get(index).getLetterGrade().equals("F"))
+                                {
+                                    System.out.print("*");
+                                }
+                            }
+                            
+                             System.out.println();
+                            break;
+                    
+                    case 1: System.out.print("D: ");    
+                            
+                            for(int index =0; index < ExamEntries.size(); index++)
+                            {
+                                if (ExamEntries.get(index).getLetterGrade().equals("D"))
+                                {
+                                    System.out.print("*");
+                                }
+                            }
+                            
+                            System.out.println();
+                            break;
+                        
+                    case 2: System.out.print("C: ");
+                            
+                            for(int index =0; index < ExamEntries.size(); index++)
+                            {
+                                if (ExamEntries.get(index).getLetterGrade().equals("C"))
                                 {
                                     System.out.print("*");
                                 }
@@ -141,9 +250,32 @@ public class GradeBook {
                             System.out.println();
                             break;
                         
-                } // end switch
+                    case 3: System.out.print("B: ");   
+                                         
+                            for(int index =0; index < ExamEntries.size(); index++)
+                            {
+                                if (ExamEntries.get(index).getLetterGrade().equals("B"))
+                                {
+                                    System.out.print("*");
+                                }
+                            } 
+                            System.out.println();
+                            break;
+                        
+                    case 4: System.out.print("A: ");
+                            for(int index =0; index < ExamEntries.size(); index++)
+                            {
+                                if (ExamEntries.get(index).getLetterGrade().equals("A"))
+                                {
+                                    System.out.print("*");
+                                }
+                            }
+                            System.out.println();
+                            break;
+                        
+                } // end switch for exam entries
                 
-            } // end of outer for
+            } // end of outer for for Exam Entries
             
 	} // end of display summary
 
