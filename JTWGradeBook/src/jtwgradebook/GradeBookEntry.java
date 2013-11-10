@@ -8,7 +8,6 @@ package jtwgradebook;
  *
  * @author Instructor provided material
  */
-import java.util.Scanner;
 
 public abstract class GradeBookEntry {
 
