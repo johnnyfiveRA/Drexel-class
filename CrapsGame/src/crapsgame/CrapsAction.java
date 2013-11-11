@@ -16,6 +16,8 @@ package crapsgame;
  * Eighth, You cannot load the dice. The computer is also perfectly fair.
  * Ninth, each player gets to roll the dice after each one has rolled the status
  *      -is displayed
+ * Tenth, some music and sounds to go with the game so long as the files are in 
+ *		-the same directory as the program
  * The essence of the game is here but it is simplified.      
  */
 
@@ -39,7 +41,7 @@ public class CrapsAction implements Runnable
     private Dice rolled1 = new Dice();
     private Dice rolled2 = new Dice();
     private boolean comeOutRoll = true;
-    
+
     // System.getProperty("users.dir") + System.getProperty("file.seperator") +  put back if needed returned null when used
     
     // the following strings are for the various sounds and music played during the game
@@ -452,6 +454,7 @@ public class CrapsAction implements Runnable
           }
         else if (p.getDebt() < 0 && p.getWallet() > 0) {
                     
+			@SuppressWarnings("UnusedAssignment")
                int amountHolder =0;
                System.out.println(p.getName() + " is in debt. Would they like to pay their debt? y or n");
                theChoice = input.nextLine();
@@ -496,7 +499,7 @@ public class CrapsAction implements Runnable
         
         while (runMe) {
  
-            // not needed yet BACKGROUND.play();
+		BACKGROUND.play();
             
             for (CrapsPlayer roller : players) {
                if (marker == 0)
@@ -510,7 +513,7 @@ public class CrapsAction implements Runnable
                }
                    System.out.println(roller.getName() + " has the Dice"); //
                    rollCrapsDice();
-                // not needed yet DICE_ROLL.play();
+				DICE_ROLL.play();
                 
                holdOn(1000); 
                /* try catch blocks for sleeping are in here instead of clogging
@@ -546,19 +549,19 @@ public class CrapsAction implements Runnable
                /* Someone must be wondering why I'm using so many sleeps
                 * All I'm really doing is making sure the users know what's 
                 * going on instead of it flying past very quickly. 
-                */
-               
-               // not needed yet WINNER.play();
-                
+			*/  
             } // end roll for each player
             
             System.out.println("Status of each player");
-            for (int i =0; i < players.size(); i++) { 
+		  
+		  ROUND_OVER.play();
+            
+		  for (int i =0; i < players.size(); i++) { 
                 System.out.println(players.get(i).toString());
                 this.checkStatus(players.get(i));
-                holdOn(2000);
+                holdOn(3000);
             } // end player status loop
-            
+            BACKGROUND.close();
             if (players.isEmpty()) // if there are no more players than the game is over
                 runMe = false;
         } // end game while loop
