@@ -4,7 +4,7 @@ package crapsgame;
 import java.util.Scanner;
 
 /*
- * Instructor provided library
+ * Instructor provided library some modifications performed by John White
  */
 
 public class Person {

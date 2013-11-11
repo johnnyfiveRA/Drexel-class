@@ -6,14 +6,20 @@ package crapsgame;
 
 /**
  *
- * @author John
+ * @author John White
  */
-public class CrapsGame {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+import java.util.Scanner;
+
+public class CrapsGame {
+    
+    public static void main(String[] args) 
+    {
+        Scanner input = new Scanner(System.in);
+        
+        System.out.println("How many players are coming to the table?");
+        CrapsAction theGame = new CrapsAction(input.nextInt());
+        theGame.run();
+
     }
 }
