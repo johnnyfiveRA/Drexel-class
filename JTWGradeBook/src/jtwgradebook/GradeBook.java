@@ -7,6 +7,7 @@ package jtwgradebook;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.*;
 
 public class GradeBook {
 	
@@ -59,7 +60,7 @@ public class GradeBook {
                 homeorExam = reader.next();
             }
             
-            if (homeorExam.equals("homework"))
+            if (homeorExam.equalsIgnoreCase("homework"))
             {
                 HomeWorkEntry hEntry = new HomeWorkEntry();
                 hEntry.setStudent(students.get(studentSelect));
@@ -81,7 +82,7 @@ public class GradeBook {
                 homeWorkEntries.add(hEntry);
             }
             
-            if (homeorExam.equals("exam"))
+            if (homeorExam.equalsIgnoreCase("exam"))
             {
                 ExamEntry eEntry = new ExamEntry();
                 eEntry.setStudent(students.get(studentSelect));
@@ -115,6 +116,8 @@ public class GradeBook {
             
 	}
 	
+	// adding file IO to this class. This method will be our template
+	
 	public void listGrades() throws InterruptedException
         {
             // DONE: Print out all the grade entries in this gradebook coded by JTW
@@ -133,6 +136,145 @@ public class GradeBook {
                 ExamEntries.get(i).getData();
             }
 	}
+	
+	// add the file handling classes here.
+	
+	public void saveGrades()
+        {
+            // ToDo: make this method save the grades and the person they are
+		   // attached to into a file (not sure if will do binary or text)
+		   
+		   // need to add an indicator of whether the entry is a homework or exam.
+		   // using extension to do so. Not optimal but will work
+		   
+            for (int i =0; i < homeWorkEntries.size();i++)
+            {  
+			 try
+			 {
+				 File homeworkEntry = new File((homeWorkEntries.get(i).getStudent().getName() + "-"  
+					+ homeWorkEntries.get(i).getAssessmentName() + ".hwe"));
+				 FileOutputStream fileOut = new FileOutputStream(homeworkEntry);
+				 
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(homeWorkEntries.get(i));
+				out.close();
+				fileOut.close();
+				
+				/*
+				BufferedWriter entryWriter = new BufferedWriter(new FileWriter (homeworkEntry,true) );
+				entryWriter.write(homeWorkEntries.get(i).getAssessmentName() + "," 
+					   + homeWorkEntries.get(i).getNumericGrade());
+				entryWriter.close(); */
+			 } 
+			 catch (IOException e)
+			 {
+				 System.out.println("Could not save entry");
+			 }
+		  
+		  }
+            
+		  for (int i =0; i < ExamEntries.size();i++)
+            {
+                try
+			 {
+				 File examEntry = new File((ExamEntries.get(i).getStudent().getName() + "-"  
+					+ ExamEntries.get(i).getAssessmentName() + ".exm"));
+				 FileOutputStream fileOut = new FileOutputStream(examEntry);
+				 
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(ExamEntries.get(i));
+				out.close();
+				fileOut.close();
+				
+				/*BufferedWriter entryWriter = new BufferedWriter(new FileWriter (examEntry,true) );
+				entryWriter.write(" " + ExamEntries.get(i).getAssessmentName() + " " 
+					   + ExamEntries.get(i).getNumericGrade());
+				entryWriter.close(); */
+			 } 
+			 catch (IOException e)
+			 {
+				 System.out.println("Could not save entry");
+			 }
+            }
+	}
+	
+	// load grades method will go here. may use a constructor as well. 
+	
+	public void loadGrades()
+	{
+		File cwd = new File(System.getProperty("user.dir"));
+		
+		if (cwd.isDirectory()) {
+			for (File child : cwd.listFiles()) {
+				// this loop will go over each file
+	
+				if (child.getName().contains(".hwe")) { // just so we all know this is probably a bad way to do this
+					File hwRead = new File(child.getName());
+					try
+					{
+						HomeWorkEntry temp = new HomeWorkEntry();
+						FileInputStream input = new FileInputStream(hwRead);
+						ObjectInputStream reader = new ObjectInputStream(input);
+						homeWorkEntries.add((HomeWorkEntry)reader.readObject());
+						reader.close();
+						/*
+						Scanner stringRead = new Scanner(input);
+					
+						while (stringRead.hasNext())
+						{
+							temp.setAssessmentName(stringRead.next());
+							temp.setNumericGrade(stringRead.nextInt());
+						}
+						homeWorkEntries.add(temp);
+						input.close(); */
+					}
+					catch (IOException e)
+					{
+						System.out.println("Could not read file: " + child.getName());
+					}
+					catch (ClassNotFoundException e)
+					{
+						System.out.println("File read was not in correct format: " + child.getName());
+					}
+					
+				} // end homeworkentry if
+				
+				else if (child.getName().contains(".exm")) { // just so we all know this is probably a bad way to do this
+					File exRead = new File(child.getName());
+					
+					try
+					{
+						// ExamEntry temp = new ExamEntry();
+						FileInputStream input = new FileInputStream(exRead);
+						ObjectInputStream reader = new ObjectInputStream(input);
+						ExamEntries.add((ExamEntry)reader.readObject());
+						reader.close();
+						/*
+						Scanner stringRead = new Scanner(input);
+					
+						while (stringRead.hasNext())
+						{
+							temp.setAssessmentName(stringRead.next());
+							temp.setNumericGrade(stringRead.nextInt(), 0);
+						}
+						ExamEntries.add(temp);
+						input.close();
+						*/
+					}
+					catch (IOException e)
+					{
+						System.out.println("Could not read file: " + child.getName());
+					}
+					catch (ClassNotFoundException e)
+					{
+						System.out.println("File read was not in correct format: " + child.getName());
+					}
+					
+				} // end else if for exam entry
+				
+			} // end for loop
+		} // end directory check
+	} // end load method
 	
 	public void displaySummary() throws InterruptedException
         {

@@ -2,12 +2,13 @@
 package jtwgradebook;
 
 import java.util.Scanner;
+import java.io.Serializable;
 
 /*
  * Instructor provided library
  */
 
-public class Person {
+public class Person implements Serializable{
 
 	private String name;
 	private int age;

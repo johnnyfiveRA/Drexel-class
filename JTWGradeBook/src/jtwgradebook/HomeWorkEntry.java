@@ -8,9 +8,12 @@ package jtwgradebook;
  *
  * @author John White
  */
-public class HomeWorkEntry extends GradeBookEntry
+
+import java.io.Serializable;
+
+public class HomeWorkEntry extends GradeBookEntry implements Serializable
 {
-        private Person student;
+     private Person student;
 	private int numericGrade;
 	private String assessmentName;
 
